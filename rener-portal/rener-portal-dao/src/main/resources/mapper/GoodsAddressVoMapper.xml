@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.GoodsAddressVoMapper">
+
+    <resultMap id="ojbk" type="com.rener.portal.model.vo.GoodsAddressVo">
+        <result property="storeAddress" column="store_address"/>
+    </resultMap>
+
+
+    <select id="address" resultMap="ojbk">
+        SELECT store_address FROM tb_stores
+    </select>
+
+</mapper>

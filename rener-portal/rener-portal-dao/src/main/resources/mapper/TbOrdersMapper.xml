@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.TbOrdersMapper">
+    <update id="deleteById">
+    UPDATE tb_orders set mark=0,order_state=4 where order_id=#{id}
+    </update>
+    <update id="updateTimeByStaus">
+        UPDATE tb_orders
+        <trim prefix="set" suffixOverrides=",">
+            <if test="status==1">pay_time=#{time},</if>
+            <if test="status==3">send_time=#{time},</if>
+            <if test="status==4">recieve_time=#{time},</if>
+        </trim>
+        WHERE order_id=#{orderId} and mark=1
+    </update>
+    <insert id="insertOrderId" parameterType="TbOrders">
+        INSERT INTO tb_orders (store_id,user_id,order_num,order_state,order_createdate)
+        VALUES (#{storeId},#{userId},#{orderNum},#{orderState},#{orderCreatedate})
+        <selectKey resultType="Long" keyProperty="orderId" order="AFTER">
+            SELECT @@IDENTITY
+        </selectKey>
+    </insert>
+    <resultMap id="BaseResultMap" type="TbOrders">
+        <id column="order_id" jdbcType="BIGINT" property="orderId"/>
+        <result column="order_state" property="orderState"/>
+        <result column="create_time" property="createTime"/>
+        <result column="order_totalprice" property="orderTotalprice"/>
+        <result column="order_outdata" property="orderOutdata"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="send_time" property="sendTime"/>
+        <result column="recieve_time" property="recieveTime"/>
+    </resultMap>
+    <!--<select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">-->
+    <!--select order_id,order_state,order_createdate,order_totalprice,order_outdata,pay_time,send_time,recieve_time-->
+    <!--FROM tb_orders-->
+    <!--WHERE order_id=#{id,jdbcType=BIGINT};-->
+    <!--</select>-->
+    <update id="updateStatus">
+        UPDATE tb_orders SET order_state=#{status} WHERE order_id=#{orderId} and mark=1
+    </update>
+    <update id="updateTotalPrice">
+        UPDATE tb_orders set order_totalprice=#{totalPrice} WHERE order_id=#{orderId} and mark=1
+    </update>
+    <select id="selectOrderNum" resultType="int">
+        select count(*) from tb_orders where user_id=#{userId} and mark=1
+    </select>
+    <update id="updateOrderDescribe">
+        UPDATE tb_orders SET order_describe=#{message},pay_time=#{payTime},order_state=5 WHERE order_id=#{orderId} and mark=1
+    </update>
+</mapper>

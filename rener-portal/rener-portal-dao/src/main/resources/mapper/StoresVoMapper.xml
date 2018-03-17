@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.StoresVoMapper">
+
+    <resultMap id="BaseResultMap" type="com.rener.portal.model.vo.StoresVo">
+        <id column="store_id" property="storeId" ></id>
+        <result column="store_name" property="storeName"></result>
+        <result column="store_address" property="storeAddress"></result>
+        <result column="store_tel" property="storeTel"></result>
+        <result column="store_icon" property="storeIcon"></result>
+    </resultMap>
+    <resultMap id="DetailResultMap" type="com.rener.portal.model.vo.StoresDetailsVo" extends="BaseResultMap">
+        <result column="work_dates" property="workDates"></result>
+        <result column="store_level" property="storeLevel"></result>
+        <result column="business_permit" property="businessPermit"></result>
+        <result column="safe_permit" property="safePermit"></result>
+        <result column="store_pic" property="storePic"></result>
+    </resultMap>
+
+    <!--全部收藏分页查询 store_id>#{lastStoreId} AND-->
+    <select id="SelectAll"  resultMap="BaseResultMap">
+        SELECT store_name,store_address,store_tel,store_icon,store_id
+        FROM tb_stores
+        WHERE
+        tb_stores.store_id IN (
+        SELECT tc.colle_store_id
+        FROM tb_colle tc
+        WHERE tc.colle_user_id= #{userId} AND tc.colle_state = 0
+        )
+        ORDER BY store_id ASC LIMIT #{num},5
+    </select>
+    <select id="SelectAll1"  resultMap="BaseResultMap">
+        SELECT store_name,store_address,store_tel,store_icon,store_id
+        FROM tb_stores
+        WHERE
+        tb_stores.store_id IN (
+        SELECT tc.colle_store_id
+        FROM tb_colle tc
+        WHERE tc.colle_user_id= #{userId} AND tc.colle_state = 0
+        )
+        ORDER BY store_id ASC LIMIT 5,100
+    </select>
+
+    <!--按地区分类的列表名-->
+    <select id="SelectAreaString" resultType="String">
+        SELECT DISTINCT ts.store_address
+        FROM tb_stores ts
+        WHERE ts.store_id IN (
+        SELECT tc.colle_store_id
+        FROM tb_colle tc
+        WHERE  tc.colle_user_id = #{userId} AND tc.colle_state = 0
+        )
+        ORDER BY CONVERT(ts.store_address USING gbk)
+    </select>
+
+    <!--按地区分類的列表名-->
+    <select id="SelectClassesString" resultType="String">
+        SELECT DISTINCT tsc.store_classes_name
+        FROM tb_store_classes tsc
+        WHERE tsc.store_classes_id IN (
+        SELECT  ts.store_classes_id
+        FROM tb_stores ts
+        WHERE ts.store_id IN (
+        SELECT tc.colle_store_id
+        FROM tb_colle tc
+        WHERE tc.colle_user_id=#{userId} AND tc.colle_state = 0
+        )
+        )ORDER BY CONVERT(tsc.store_classes_name USING gbk)
+    </select>
+
+    <!--查找指定地区所所收藏的店铺-->
+    <select id="selectStoresForArea" resultMap="BaseResultMap">
+        SELECT store_name,store_address,store_tel,store_icon,store_id
+        FROM tb_stores ts,tb_colle tc
+        WHERE INSTR(ts.store_address,#{Area})
+        AND tc.colle_user_id = #{userId} AND tc.colle_store_id = ts.store_id AND tc.colle_state = 0
+        LIMIT #{num},7
+    </select>
+
+    <!--查找指定类型所收藏的商铺-->
+    <select id="selectStoresForClasses" resultMap="BaseResultMap">
+        SELECT store_name,store_address,store_tel,store_icon,store_id
+        FROM tb_stores ts,tb_colle tc
+        WHERE ts.store_classes_id = (
+            SELECT tsc.store_classes_id
+            FROM tb_store_classes tsc
+            WHERE tsc.store_classes_name = #{Classes})
+        AND tc.colle_user_id = #{userId}
+        AND tc.colle_state = 0
+        AND tc.colle_store_id = ts.store_id
+        LIMIT #{num},7
+    </select>
+
+    <!--按日期查詢前綴-->
+    <sql id="DateSqlPre">
+        SELECT store_name,store_address,store_tel,store_icon,store_id
+        FROM tb_stores ts,tb_colle tc
+        WHERE  ts.store_id IN (
+        SELECT colle_store_id
+        FROM tb_stores ts
+    </sql>
+    <!--按日期查詢後綴-->
+    <sql id="DateSqlSuf">
+        AND tc.colle_user_id= #{userId})
+        AND ts.store_id=tc.colle_store_id  AND tc.colle_state = 0
+        ORDER BY tc.colle_date DESC LIMIT #{num},7
+    </sql>
+
+    <!--按时间查找-->
+    <select id="DateSelect" resultMap="BaseResultMap">
+        <include refid="DateSqlPre"/>
+        <choose>
+            <when test="dateType == 'threeDays'">
+                WHERE DATE_SUB(CURDATE(), INTERVAL 3 DAY) &lt;= DATE(tc.colle_date)
+            </when>
+            <when test="dateType == 'oneWeek'">
+                WHERE DATE_SUB(CURDATE(), INTERVAL 7 DAY) &lt;= DATE(tc.colle_date)
+            </when>
+            <when test="dateType == 'oneMonth'">
+                --                 WHERE DATE_FORMAT(`colle_date`,'%Y%m') =DATE_FORMAT(CURDATE(),'%Y%m')
+                WHERE DATE_SUB(CURDATE(), INTERVAL 31 DAY) &lt;= DATE(tc.colle_date)
+            </when>
+        </choose>
+        <include refid="DateSqlSuf"/>
+    </select>
+
+    <!--查询商铺的详情信息-->
+    <select id="selectToStore" resultMap="DetailResultMap">
+        SELECT  store_id,store_icon,store_name,store_address,store_tel,store_level,work_dates,store_pic,business_permit,safe_permit
+        FROM tb_stores ts
+        WHERE ts.store_id = #{storeId}
+    </select>
+
+
+</mapper>

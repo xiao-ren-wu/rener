@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.TbStoreClassesMapper">
+
+    <resultMap id="BaseResultMap" type="TbStoreClasses">
+        <id column="store_classes_id" jdbcType="SMALLINT" property="storeClassesId" />
+        <result column="store_classes_name" jdbcType="VARCHAR" property="storeClassesName" />
+        <result column="create_time" jdbcType="TIME" property="createTime" />
+        <result column="update_time" jdbcType="TIME" property="updateTime" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        store_classes_id, store_classes_name, create_time, update_time
+    </sql>
+
+    <select id="find" resultType="TbStoreClasses">
+        SELECT * from tb_store_classes
+    </select>
+
+    <select id="findById1" parameterType="java.lang.Integer" resultType="TbStoreClasses">
+        SELECT * from tb_store_classes
+        where store_classes_id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <update id="updateByPrimaryKey1" parameterType="TbStoreClasses">
+    update tb_store_classes
+    set store_classes_name = #{storeClassesName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where store_classes_id = #{storeClassesId,jdbcType=SMALLINT}
+    </update>
+
+    <delete id="deleteByPrimaryKey1" parameterType="java.lang.Integer">
+        delete from tb_store_classes
+        where store_classes_id = #{id,jdbcType=SMALLINT}
+    </delete>
+
+    <insert id="insert" parameterType="TbStoreClasses">
+        insert into tb_store_classes (store_classes_id, store_classes_name,
+        create_time, update_time)
+        values (#{storeClassesId,jdbcType=SMALLINT}, #{storeClassesName,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIME}, #{updateTime,jdbcType=TIME})
+    </insert>
+
+    <select id="selectUserList" resultType="TbStoreClasses">
+        SELECT * FROM tb_store_classes
+    </select>
+</mapper>

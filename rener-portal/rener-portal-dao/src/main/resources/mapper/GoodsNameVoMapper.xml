@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.GoodsNameVoMapper">
+    <resultMap id="ojbk" type="com.rener.portal.model.vo.GoodsNameVo">
+        <result column="goods_name" property="goodsName"></result>
+    </resultMap>
+
+    <!--<select id="goodsName" resultMap="ojbk">-->
+        <!--SELECT goods_name FROM tb_goods ORDER BY goods_sales DESC LIMIT 0,5-->
+    <!--</select>-->
+
+    <resultMap id="ojbk1" type="com.rener.portal.model.vo.GoodsNameVo">
+        <result property="goodsName" column="goods_name"></result>
+    </resultMap>
+     <!--<select id="fuzzysearch" resultMap="ojbk1">-->
+    <!--SELECT tg.goods_name-->
+    <!--FROM tb_goods tg-->
+    <!--WHERE-->
+    <!--<if test="name != null">-->
+    <!--INSTR(goods_name,#{names})>1-->
+    <!--</if>-->
+    <!--</select>-->
+
+
+</mapper>

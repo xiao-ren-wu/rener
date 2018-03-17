@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.TbStoresMapper">
+    <resultMap id="BaseResultMap" type="TbStores">
+        <id column="store_id" jdbcType="BIGINT" property="storeId"/>
+        <result column="store_name" jdbcType="VARCHAR" property="storeName"/>
+        <result column="store_address" jdbcType="VARCHAR" property="storeAddress"/>
+        <result column="store_tel" jdbcType="CHAR" property="storeTel"/>
+        <result column="store_classes_id" jdbcType="SMALLINT" property="storeClassesId"/>
+        <result column="opening_hours" jdbcType="TIME" property="openingHours"/>
+        <result column="work_dates" jdbcType="VARCHAR" property="workDates"/>
+        <result column="deliever_cost" jdbcType="DECIMAL" property="delieverCost"/>
+        <result column="business_permit" jdbcType="VARCHAR" property="businessPermit"/>
+        <result column="safe_permit" jdbcType="VARCHAR" property="safePermit"/>
+        <result column="store_level" jdbcType="SMALLINT" property="storeLevel"/>
+        <result column="store_icon" jdbcType="VARCHAR" property="storeIcon"/>
+        <result column="store_pic" jdbcType="VARCHAR" property="storePic"/>
+        <result column="create_time" jdbcType="TIME" property="createTime"/>
+        <result column="update_time" jdbcType="TIME" property="updateTime"/>
+        <result column="store_introduce" jdbcType="VARCHAR" property="storeIntroduce"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="TbStores">
+        <result column="store_describe" jdbcType="LONGVARCHAR" property="storeDescribe"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        store_id, store_name, store_address, store_tel, store_classes_id, opening_hours,
+        work_dates, deliever_cost, business_permit, safe_permit, store_level, store_icon,
+        store_pic, create_time, update_time, store_introduce
+    </sql>
+    <sql id="Blob_Column_List">
+        store_describe
+    </sql>
+    <select id="selectByStoreId" parameterType="Long" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from tb_stores
+        where store_id = #{storeId,jdbcType=BIGINT}
+    </select>
+    <select id="selectStoreName" parameterType="Long" resultType="String">
+        select store_name
+        from tb_stores
+        where store_id=#{storeId}
+    </select>
+</mapper>
+

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.TbColleMapper">
+
+    <!--通过店铺id和用户id更改收藏标志位-->
+    <update id="changeCollectState" parameterType="TbColle">
+        update tb_colle
+        <set>
+            <if test="colleState!=null">
+                colle_state=#{colleState}
+            </if>
+        </set>
+        WHERE colle_store_id=#{colleStoreId} AND colle_user_id=#{colleUserId}
+
+    </update>
+
+    <!--通过店铺id和用户id查询用户收藏标志位-->
+    <select id="findCollectState" parameterType="TbColle" resultType="Integer">
+        SELECT colle_state FROM tb_colle WHERE colle_store_id=#{colleStoreId} AND  colle_user_id=#{colleUserId}
+    </select>
+    <!--插入用户收藏数据-->
+    <insert id="addCollectState" parameterType="TbColle">
+        INSERT INTO tb_colle (
+        colle_store_id,
+        colle_user_id,
+
+        colle_date) VALUE
+        (#{colleStoreId},
+        #{colleUserId},
+        #{colleDate})
+    </insert>
+    <!--chenkuan-->
+    <select id="colleCounts" resultType="integer">
+        SELECT COUNT(*) FROM tb_colle tc WHERE tc.colle_user_id = #{userId} AND tc.colle_state = 0
+    </select>
+
+</mapper>
+        <!--插入用户收藏数据
+
+        <insert id="addCollectState" parameterType="TbColle">
+            INSERT INTO tb_colle (
+              colle_store_id,
+              colle_user_id,
+
+              colle_date) VALUE
+             (#{colleStoreId},
+              #{colleUserId},
+              #{colleDate})
+        </insert>
+
+        <resultMap id="BaseResultMap" type="TbColle">
+            <id column="colle_id" jdbcType="BIGINT" property="colleId" />
+            <result column="colle_store_id" jdbcType="BIGINT" property="colleStoreId" />
+            <result column="colle_user_id" jdbcType="BIGINT" property="colleUserId" />
+            <result column="colle_date" jdbcType="DATE" property="colleDate" />
+            <result column="colle_state" jdbcType="TINYINT" property="colleState" />
+            <result column="create_time" jdbcType="TIME" property="createTime" />
+            <result column="update_time" jdbcType="TIME" property="updateTime" />
+        </resultMap>
+        <sql id="Base_Column_List">
+        colle_id, colle_store_id, colle_user_id, colle_date, colle_state, create_time, update_time
+      </sql>
+
+        <select id="find" resultType="TbColle">
+            SELECT * from tb_colle
+        </select>
+
+        <select id="findById1" parameterType="java.lang.Integer" resultType="TbColle">
+            SELECT * from tb_colle
+            where colle_id = #{id,jdbcType=INTEGER}
+        </select>
+
+        <update id="updateByPrimaryKey1" parameterType="TbColle">
+            update tb_colle
+        set colle_store_id = #{colleStoreId,jdbcType=BIGINT},
+          colle_user_id = #{colleUserId,jdbcType=BIGINT},
+          colle_date = #{colleDate,jdbcType=DATE},
+          colle_state = #{colleState,jdbcType=TINYINT},
+          create_time = #{createTime,jdbcType=TIMESTAMP},
+          update_time = #{updateTime,jdbcType=TIMESTAMP}
+        where colle_id = #{colleId,jdbcType=BIGINT}
+        </update>
+
+<<<<<<< HEAD
+    <insert id="insert" parameterType="TbColle">
+         insert into tb_colle (colle_id, colle_store_id, colle_user_id,
+      colle_date, colle_state, create_time,
+      update_time)
+    values (#{colleId,jdbcType=BIGINT}, #{colleStoreId,jdbcType=BIGINT}, #{colleUserId,jdbcType=BIGINT},
+      #{colleDate,jdbcType=DATE}, #{colleState,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP},
+      #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <select id="fenye" parameterType="java.lang.Integer" resultType="TbColle">
+        SELECT * FROM tb_colle
+        WHERE colle_id>#{pageNow} ORDER BY colle_id ASC LIMIT  #{pageSize}
+    </select>
+=======
+        <delete id="deleteByPrimaryKey1" parameterType="java.lang.Integer">
+             delete from tb_colle
+           where colle_id = #{colleId,jdbcType=BIGINT}
+        </delete>
+>>>>>>> gaopan
+
+        <insert id="insert" parameterType="TbColle">
+             insert into tb_colle (colle_id, colle_store_id, colle_user_id,
+          colle_date, colle_state, create_time,
+          update_time)
+        values (#{colleId,jdbcType=BIGINT}, #{colleStoreId,jdbcType=BIGINT}, #{colleUserId,jdbcType=BIGINT},
+          #{colleDate,jdbcType=DATE}, #{colleState,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP},
+          #{updateTime,jdbcType=TIMESTAMP})
+        </insert>
+
+        <select id="fenye" parameterType="java.lang.Integer" resultType="TbColle">
+            SELECT * FROM tb_colle
+            WHERE colle_id>#{pageNow} ORDER BY colle_id ASC LIMIT  #{pageSize}
+        </select>
+
+    </mapper>-->

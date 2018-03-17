@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.GoodsPicNameVoMapper">
+    <resultMap id="ojbk" type="com.rener.portal.model.vo.GoodsPicNameVo">
+        <result property="goodsType" column="goods_type"></result>
+        <result column="goods_sample_pic" property="goodsSamplePic"></result>
+    </resultMap>
+    <select id="PicName" resultMap="ojbk">
+    SELECT tgt.goods_sample_pic,tgt.goods_type FROM tb_goods_type tgt,tb_goods tb
+    WHERE tb.goods_type_id=tgt.goods_type_id ORDER BY tb.goods_sales DESC
+</select>
+
+
+</mapper>

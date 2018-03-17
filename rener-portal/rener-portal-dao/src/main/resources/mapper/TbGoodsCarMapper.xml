@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.TbGoodsCarMapper">
+    <resultMap id="searchByGoods" type="com.rener.portal.model.vo.TbGoodsCarView">
+        <result property="count" column="COUNT"></result>
+        <result property="goods_id" column="goods_id"></result>
+        <result property="goods_car_id" column="goods_car_id"></result>
+        <association property="tbGoodesInfo"
+                     select="com.rener.portal.dao.TbGoodsMapper.selectGoodsInfo"
+                     column="goods_id"></association>
+    </resultMap>
+
+    <select id="selectByUserId" resultMap="searchByGoods">
+        select COUNT,goods_id,goods_car_id
+        from tb_goods_car
+        where user_id=#{userId} and mark=1
+        order by create_time desc
+    </select>
+
+    <insert id="insert" parameterType="TbGoodsCar">
+        <selectKey order="AFTER" keyProperty="goodsCarId"
+                   resultType="Long">
+            select LAST_INSERT_ID();
+        </selectKey>
+        insert into tb_goods_car
+        (goods_id, user_id)
+        values (#{goodsId},#{userId})
+    </insert>
+
+    <update id="updateCnt">
+        update tb_goods_car set count=#{count}
+        where goods_car_id=#{goodsCarId}
+    </update>
+
+    <update id="updateCntInStore">
+        update tb_goods_car set count=count+1,create_time=(SELECT now())
+        where user_id=#{userId} and goods_id=#{goodsId} and mark=1
+    </update>
+
+    <update id="updateOnMark">
+        update tb_goods_car
+        set mark=1,create_time=(SELECT now()),cnt=1
+        where user_id=#{userId} and goods_id=#{goodsId}
+    </update>
+
+    <!--<update id="updateOffMark">-->
+        <!--update tb_goods_car set mark=0-->
+        <!--where user_id=#{userId} and goods_id=#{goodsId}-->
+    <!--</update>-->
+
+    <resultMap id="orederGoods" type="TbGoodsCar">
+        <id property="goodsCarId" column="tb_goods_car.goods_car_id"/>
+        <result property="goodsId" column="tb_goods_car.goods_id"/>
+        <result property="userId" column="tb_goods_car.user_id"/>
+        <result property="count" column="tb_goods_car.count"/>
+    </resultMap>
+
+    <select id="selectByStoreId" resultMap="orederGoods">
+        SELECT tb_goods_car.goods_car_id ,tb_goods_car.goods_id,tb_goods_car.user_id,tb_goods_car.count
+        FROM tb_goods_car,tb_goods
+        WHERE tb_goods.store_id=#{storeId} AND tb_goods.goods_id=tb_goods_car.goods_id
+        AND tb_goods_car.user_id=#{userId}
+        AND tb_goods_car.goods_id IN
+        <foreach collection="goodsId" item="i" separator="," open="(" close=")">
+            #{i}
+        </foreach>
+    </select>
+
+    <update id="delete">
+        UPDATE tb_goods_car SET mark=0 where goods_car_id IN
+        <foreach collection="list" item="goodsCarId" open="(" close=")" separator=",">
+            #{goodsCarId}
+        </foreach>
+    </update>
+
+    <update id="updateN">
+        update tb_goods_car set n=#{n} where goods_car_id=#{goodsCarId}
+    </update>
+
+    <update id="cntAddOne">
+        update tb_goods_car set count=count+1
+        where user_id=#{userId} and goods_id=#{goodsId}
+    </update>
+
+    <select id="findCount" resultType="Integer">
+        select count from tb_goods_car
+        where user_id=#{userId} and goods_id=#{goodsId}
+    </select>
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.TbCommentKeyMapper">
+
+
+    <insert id="insert" parameterType="com.rener.portal.model.mo.TbCommentKey">
+        INSERT INTO
+        tb_comment_key(comment_id,store_id,great_location,good_service,delicious,good_health)
+        VALUES(#{commentId},#{storeId},#{greatLocation},#{goodService},#{delicious},#{goodHealth})
+    </insert>
+
+    <select id="selectCount" resultType="com.rener.portal.model.vo.TbCommentKeyVo">
+        SELECT store_id,COUNT(great_location) AS great_location,COUNT(good_service) AS good_service,
+        COUNT(delicious) AS delicious,COUNT(good_health) AS good_health FROM tb_comment_key WHERE store_id=#{storeId}
+    </select>
+
+    <delete id="delete">
+        DELETE FROM tb_comment_key WHERE comment_id = #{commentId}
+    </delete>
+</mapper>
+

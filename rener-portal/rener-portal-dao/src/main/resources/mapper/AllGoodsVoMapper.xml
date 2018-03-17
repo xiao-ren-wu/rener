@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.AllGoodsVoMapper">
+
+    <resultMap id="ojbk" type="com.rener.portal.model.vo.AllGoodsVo">
+        <result column="goods_id" property="goodsId"></result>
+        <result column="store_name" property="storeName"></result>
+        <result column="goods_pic" property="goodsPic"></result>
+        <result column="Praise_rate" property="praiseRate"></result>
+        <result column="goods_price" property="goodsPrice"></result>
+        <result column="goods_sales" property="goodsSales"></result>
+        <result column="discount_rate" property="discountRate"></result>
+        <result column="store_address" property="storeAddress"></result>
+        <result column="goods_name" property="goodsName"></result>
+    </resultMap>
+
+    <!--<select id="SelectAllGoods" resultMap="ojbk">-->
+        <!--SELECT tg.goods_id,tg.goods_name,tg.goods_pic,tg.Praise_rate,tg.goods_sales,tg.goods_price,td.discount_rate,ts.store_name,ts.store_address-->
+        <!--FROM tb_goods tg,tb_discount td,tb_stores ts,tb_goods_type tgt-->
+        <!--WHERE tg.store_id=ts.store_id AND tg.discount_id=td.discount_id AND tg.goods_type_id = tgt.goods_type_id-->
+
+    <!--</select>-->
+
+    <!--<select id="SelectGoodsByType" resultMap="ojbk">-->
+        <!--SELECT tg.goods_id,tg.goods_name,tg.goods_pic,tg.Praise_rate,tg.goods_sales,tg.goods_price,td.discount_rate,ts.store_name,ts.store_address-->
+        <!--FROM tb_goods tg,tb_discount td,tb_stores ts,tb_goods_type tgt-->
+        <!--WHERE tg.store_id=ts.store_id AND tg.discount_id=td.discount_id AND tg.goods_type_id = tgt.goods_type_id-->
+                <!--AND tg.goods_type_id = (SELECT tgt.goods_type_id FROM tb_goods_type tgt WHERE INSTR(tgt.goods_type,#{types})>0)-->
+
+    <!--</select>-->
+
+    <!--<select id="SelectOneGoods" resultMap="ojbk">-->
+        <!--SELECT tg.goods_name,tg.goods_pic,tg.Praise_rate,tg.goods_sales,tg.goods_price,td.discount_rate,ts.store_name,ts.store_address-->
+        <!--FROM tb_goods tg,tb_discount td,tb_stores ts,tb_goods_type tgt-->
+        <!--WHERE tg.store_id=ts.store_id AND tg.discount_id=td.discount_id AND tg.goods_type_id = tgt.goods_type_id-->
+                <!--AND INSTR(tg.goods_name,#{names})>0-->
+    <!--</select>-->
+
+    <select id="Selectes" resultMap="ojbk">
+        SELECT
+        tg.goods_id,tg.Praise_rate,tg.goods_name,tg.goods_pic,tg.goods_sales,tg.goods_price,td.discount_rate,ts.store_name,ts.store_address
+        FROM tb_goods tg,tb_discount td,tb_stores ts,tb_goods_type tgt
+        <where>
+            tg.store_id=ts.store_id AND tg.discount_id=td.discount_id AND tg.goods_type_id = tgt.goods_type_id
+            <if test="types !='全部分类'">
+                AND tg.goods_type_id IN (SELECT tgt.goods_type_id FROM tb_goods_type tgt WHERE
+                INSTR(tgt.goods_type,#{types}))
+
+            </if>
+            <if test="address !='全部商区'">
+                AND tg.store_id IN (SELECT ts.store_id FROM tb_stores ts WHERE
+                INSTR(ts.store_address,#{address}))
+            </if>
+            <choose>
+                <when test="auto =='销量'">
+                    ORDER BY tg.goods_sales DESC
+                </when>
+                <when test="auto =='价格'">
+                    ORDER BY tg.goods_price
+                </when>
+                <when test="auto =='热度'">
+                    ORDER BY tg.goods_heat DESC
+                </when>
+            </choose>
+        </where>
+    </select>
+
+    <!--<select id="SelectAllGoodsByName" resultMap="ojbk">-->
+        <!--SELECT-->
+        <!--tg.goods_id,tg.Praise_rate,tg.goods_name,tg.goods_pic,tg.goods_sales,tg.goods_price,td.discount_rate,ts.store_name,ts.store_address-->
+        <!--FROM tb_goods tg,tb_discount td,tb_stores ts,tb_goods_type tgt-->
+        <!--<where>-->
+            <!--tg.store_id=ts.store_id AND tg.discount_id=td.discount_id AND tg.goods_type_id = tgt.goods_type_id-->
+            <!--AND tg.goods_type_id IN (SELECT tg.goods_type_id FROM tb_goods tg WHERE tg.goods_name IN (-->
+            <!--SELECT tg.goods_name FROM tb_goods tg WHERE INSTR(tg.goods_name,#{names})>0))-->
+
+        <!--</where>-->
+    <!--</select>-->
+    <select id="selectGoodsToStore" resultMap="ojbk">
+        SELECT goods_id,goods_name,goods_pic,goods_price,goods_sales,td.discount_rate
+        FROM tb_goods tg,tb_stores ts,tb_discount td
+        WHERE tg.store_id = #{storeId} = ts.store_id AND tg.discount_id = td.discount_id
+        LIMIT 0,2
+    </select>
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.SimpleOrderPageMapper">
+    <resultMap id="simpleOrderPage" type="SimpleOrderPage">
+        <id column="order_id" property="orderId"/>
+        <result column="order_state" property="orderState"/>
+        <result column="create_time" property="payTime"/>
+        <result column="order_totalprice" property="orderTotalprice"/>
+        <association property="tbStores"
+                     javaType="TbStores"
+                     column="store_id"
+                     select="com.rener.portal.dao.TbStoresMapper.selectByStoreId"/>
+    </resultMap>
+    <select id="selectOrderByStatus" resultMap="simpleOrderPage">
+        select order_id,order_state,store_id,create_time,order_totalprice FROM tb_orders
+        <choose>
+            <when test="status==1">
+                where mark=1 and DATE_SUB(CURDATE(),INTERVAL 31 DAY) &lt;= DATE(create_time)
+            </when>
+            <when test="status==2">
+                where mark=1 and order_state=2
+            </when>
+            <when test="status==3">
+                where mark=1 and order_state=3
+            </when>
+            <when test="status==4">
+                where mark=1 and order_state=4
+            </when>
+            <when test="status==5">
+                where mark=1 and order_state=5
+            </when>
+            <when test="status==6">
+                where mark=1
+            </when>
+        </choose>
+        order by create_time DESC
+    </select>
+    <select id="selectAllOrderByStatus" resultMap="simpleOrderPage">
+        select order_id,order_state,store_id,create_time,order_totalprice FROM tb_orders
+        <choose>
+            <when test="status==1">
+                where mark=1 and DATE_SUB(CURDATE(),INTERVAL 31 DAY) &lt;= DATE(create_time) and user_id=#{userId}
+            </when>
+            <when test="status==2">
+                where mark=1 and order_state=2 and user_id=#{userId}
+            </when>
+            <when test="status==3">
+                where mark=1 and order_state=3 and user_id=#{userId}
+            </when>
+            <when test="status==4">
+                where mark=1 and order_state=4 and user_id=#{userId}
+            </when>
+            <when test="status==5">
+                where mark=1 and order_state=5 and user_id=#{userId}
+            </when>
+            <when test="status==6">
+                where mark=1 and user_id=#{userId}
+            </when>
+        </choose>
+        order by create_time DESC
+    </select>
+</mapper>

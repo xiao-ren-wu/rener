@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.OrderPageDetailMapper">
+    <resultMap id="orderDetail" type="OrderPageDetail">
+        <result column="goodsNumber" property="goods_number"/>
+        <result column="goods_totalprice" property="goodsTotalprice"/>
+        <association property="tbGoods"
+                     javaType="TbGoods"
+                     column="goods_id"
+                     select="com.rener.portal.dao.TbGoodsMapper.selectGoodsInfoOfOrder"/>
+    </resultMap>
+    <select id="selectOrderDetailById" resultMap="orderDetail">
+        SELECT goods_id,goods_number,goods_totalprice from tb_order_detailses
+        where  mark=1 and order_id=#{orderId}
+    </select>
+</mapper>

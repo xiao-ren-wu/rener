@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <!--<properties resource="jdbc.properties"></properties>-->
+    <classPathEntry location="G:/maven/repository/mysql/mysql-connector-java/5.1.42/mysql-connector-java-5.1.42.jar" />
+    <!--classPathEntry location="G:/maven/repository/mysql/mysql-connector-java/5.1.42/mysql-connector-java-5.1.42.jar" /-->
+    <context id="testTables" targetRuntime="MyBatis3">
+
+        <commentGenerator>
+            <!-- 去除自动生成的注释 -->
+            <property name="suppressAllComments" value="true" />
+        </commentGenerator>
+    <!-- 数据库连接配置 -->
+    <!--<jdbcConnection driverClass="${jdbc.driverClassName}"-->
+                    <!--connectionURL="${jdbc.url}"-->
+                    <!--userId="${jdbc.username}"-->
+                    <!--password="${jdbc.password}" />-->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://localhost:3306/rener" userId="root" password="root"></jdbcConnection>
+    <!-- 非必需，类型处理器，在数据库类型和java类型之间的转换控制-->
+    <javaTypeResolver>
+        <property name="forceBigDecimals" value="false"/>
+    </javaTypeResolver>
+    <!--配置生成的实体包
+            targetPackage：生成的实体包位置，默认存放在src目录下
+            targetProject：目标工程名
+         -->
+    <javaModelGenerator targetPackage="com.rener.portal.model.vo"
+                        targetProject="rener-portal/rener-portal-pojo/src/main/java">
+        <!-- enableSubPackages:是否让schema作为包的后缀 -->
+        <property name="enableSubPackages" value="false" />
+        <!-- 从数据库返回的值被清理前后的空格 -->
+        <property name="trimStrings" value="true" />
+    </javaModelGenerator>
+
+    <!-- 实体包对应映射文件位置及名称，默认存放在src目录下 -->
+    <sqlMapGenerator targetPackage="mapper"
+                     targetProject="rener-portal/rener-portal-dao/src/main/resources">
+        <!-- enableSubPackages:是否让schema作为包的后缀 -->
+        <property name="enableSubPackages" value="false" />
+    </sqlMapGenerator>
+
+        <!-- targetPackage：mapper接口生成的位置 -->
+        <javaClientGenerator type="XMLMAPPER"
+                             targetPackage="com.rener.portal.dao"
+                             targetProject="rener-portal/rener-portal-dao/src/main/java">
+            <!-- enableSubPackages:是否让schema作为包的后缀 -->
+            <property name="enableSubPackages" value="false" />
+            <!-- enableSubPackages:是否让schema作为包的后缀 -->
+            <property name="enableSubPackages" value="false" />
+        </javaClientGenerator>
+
+        <!-- 配置表
+                   schema：不用填写
+                   tableName: 表名
+                   enableCountByExample、enableSelectByExample、enableDeleteByExample、enableUpdateByExample、selectByExampleQueryId：
+                   去除自动生成的例子
+               -->
+        <table schema="" tableName="tb_admins" enableCountByExample="false" enableSelectByExample="false"
+               enableDeleteByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false" >
+        </table>
+        <!--<table schema="" tableName="orderdetail" enableCountByExample="false" enableSelectByExample="false"-->
+               <!--enableDeleteByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false" >-->
+        <!--</table>-->
+        <!--<table schema="" tableName="orders" enableCountByExample="false" enableSelectByExample="false"-->
+               <!--enableDeleteByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false" >-->
+        <!--</table>-->
+        <!--<table schema="" tableName="user" enableCountByExample="false" enableSelectByExample="false"-->
+               <!--enableDeleteByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false" >-->
+        <!--</table>-->
+
+    </context>
+</generatorConfiguration>

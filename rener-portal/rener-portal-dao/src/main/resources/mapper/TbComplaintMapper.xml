@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.TbComplaintMapper">
+
+    <resultMap id="TbComplaintMap" type="com.rener.portal.model.vo.TbComplaintVo">
+        <result property="complaintId" column="complaint_id"/>
+        <result property="complaintPic" column="complaint_pic" javaType="com.rener.portal.model.vo.PhotoList"/>
+        <result property="userId" column="user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="complaintReason" column="complaint_reason"/>
+    </resultMap>
+
+    <!--提交投诉-->
+    <insert id="insert" parameterType="com.rener.portal.model.vo.TbComplaintVo">
+        INSERT INTO tb_complaint(complaint_reason,complaint_pic,user_id,create_time,update_time)
+        VALUES(#{complaintReason},#{complaintPic},#{userId},#{createTime},#{updateTime});
+        <selectKey resultType="Long" keyProperty="complaintId" order="AFTER">
+            SELECT @@IDENTITY
+        </selectKey>
+    </insert>
+
+    <!--查看投诉-->
+    <select id="selectAll" resultMap="TbComplaintMap">
+        SELECT * FROM tb_complaint ORDER BY create_time DESC
+    </select>
+
+    <!--查看某个人的投诉-->
+    <select id="selectByUserId" resultMap="TbComplaintMap">
+        SELECT * FROM tb_complaint WHERE user_id=#{id} ORDER BY create_time DESC
+    </select>
+
+    <!--管理员根据投诉编号删除个人投诉-->
+    <delete id="deleteByComplaintId">
+        DELETE FROM tb_complaint WHERE complaint_id=#{id}
+    </delete>
+
+</mapper>

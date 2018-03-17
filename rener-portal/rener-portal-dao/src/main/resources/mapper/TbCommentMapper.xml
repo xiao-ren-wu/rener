@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.TbCommentMapper">
+    <resultMap id="TbCommentMap" type="com.rener.portal.model.vo.TbCommentVo">
+        <result property="commentId" column="comment_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="storeId" column="store_id"/>
+        <result property="praiseLevel" column="praise_level"/>
+        <result property="uploadTime" column="upload_time"/>
+        <result property="uploadPlace" column="upload_place"/>
+        <result property="photo" column="photo" javaType="com.rener.portal.model.vo.PhotoList"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="anonymityTag" column="anonymity_tag"/>
+        <result property="commentInfo" column="comment_info"/>
+    </resultMap>
+    <resultMap id="GoodCommentVoMap" type="com.rener.portal.model.vo.GoodCommentVo">
+        <result property="userId" column="user_id"/>
+        <result property="userNickname" column="user_nickname"/>
+        <result property="userPhoto" column="user_photo"/>
+        <result property="commentId" column="comment_id"/>
+        <result property="anonymityTag" column="anonymity_tag"/>
+        <result property="commentInfo" column="comment_info"/>
+        <result property="createTime" column="create_time"/>
+        <result property="praiseLevel" column="praise_level"/>
+        <result property="photo" column="photo" javaType="com.rener.portal.model.vo.PhotoList"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="storeId" column="store_id"/>
+        <result property="uploadPlace" column="upload_place"/>
+    </resultMap>
+    <resultMap id="TbCommentMap1" type="TbComment">
+        <id column="comment_id" property="commentId"></id>
+        <result column="user_id" property="userId"></result>
+        <result column="goods_id" property="goodsId"></result>
+        <result column="store_id" property="storeId"></result>
+        <result column="upload_place" property="uploadPlace"></result>
+        <result column="photo" property="photo"></result>
+    </resultMap>
+    <resultMap id="UserCommentVoMap" type="com.rener.portal.model.vo.UserCommentVo">
+        <id column="user_nickname" property="userNickname"></id>
+        <result column="user_photo" property="userPhoto"></result>
+        <result column="praise_level" property="praiseLevel"></result>
+        <result column="comment_info" property="commentInfo"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="photo" property="photo"></result>
+    </resultMap>
+    <select id="commentall" resultMap="TbCommentMap1">
+    SELECT * from tb_comment WHERE  user_id=#{userId}
+    </select>
+    <insert id="insert" parameterType="com.rener.portal.model.vo.TbCommentVo">
+        INSERT INTO
+        tb_comment(user_id,goods_id,store_id,praise_level,comment_info,upload_time,upload_place,photo,create_time,update_time,anonymity_tag)
+        VALUES(#{userId},#{goodsId},#{storeId},#{praiseLevel},#{commentInfo},#{uploadTime},#{uploadPlace},#{photo},#{createTime},#{updateTime},#{anonymityTag});
+        <selectKey resultType="Long" keyProperty="commentId" order="AFTER">
+            SELECT @@IDENTITY
+        </selectKey>
+    </insert>
+    <select id="selectByUserId" parameterType="Long" resultMap="TbCommentMap">
+        SELECT * FROM tb_comment WHERE user_id=#{userId}
+    </select>
+
+    <select id="selectAllByStoreId" resultMap="TbCommentMap">
+        SELECT * FROM tb_comment WHERE store_id=#{storeId} ORDER BY create_time DESC LIMIT #{page},7
+    </select>
+
+    <delete id="delete">
+          DELETE FROM tb_comment WHERE comment_id=#{commentId}
+    </delete>
+
+    <select id="selectCommentToGoods" resultMap="GoodCommentVoMap">
+        SELECT u.user_id,u.user_nickname,u.user_photo,
+        c.comment_id,c.anonymity_tag,c.comment_info,c.create_time,c.praise_level,c.photo,
+        c.goods_id,c.store_id,c.upload_place
+        FROM tb_comment c,tb_users u
+        <choose>
+            <when test="condition == 'noPic'">
+                WHERE c.user_id=u.user_id AND c.goods_id=#{goodsId}
+                AND (c.photo IS NULL OR c.photo="" )
+                ORDER BY create_time DESC
+                LIMIT #{page},3
+            </when>
+            <when test="condition == 'new'">
+                WHERE c.user_id=u.user_id AND c.goods_id=#{goodsId}
+                ORDER BY create_time DESC
+                LIMIT #{page},3
+            </when>
+            <when test="condition == 'pic'">
+                WHERE c.user_id=u.user_id AND c.goods_id=#{goodsId}
+                AND (c.photo IS NOT NULL AND c.photo!="" )
+                ORDER BY create_time DESC
+                LIMIT #{page},3
+            </when>
+        </choose>
+    </select>
+
+
+    <!--chenkuan按全部/时间/按带图片 排序的评论取七条-->
+    <select id="selectCommentToStore" resultMap="UserCommentVoMap">
+        SELECT tu.user_nickname,tu.user_photo,tcm.praise_level,tcm.comment_info,tcm.create_time,photo
+        FROM tb_users tu,tb_comment tcm,tb_stores ts
+        <choose>
+            <when test="condition == 'all'">
+                WHERE tcm.store_id = #{storeId} =ts.store_id AND tcm.user_id = tu.user_id
+                LIMIT 0,3
+            </when>
+            <when test="condition == 'new'">
+                WHERE tcm.store_id = #{storeId} =ts.store_id AND tcm.user_id = tu.user_id
+                ORDER BY tcm.create_time DESC LIMIT 0,3
+            </when>
+            <when test="condition == 'withPic'">
+                WHERE tcm.store_id = #{storeId} =ts.store_id AND tcm.user_id = tu.user_id AND tcm.photo IS NOT NULL
+                LIMIT 0,3
+            </when>
+        </choose>
+    </select>
+    <!--chenkuan-->
+    <select id="selectCount1" resultType="integer">
+        SELECT COUNT(*) from tb_comment WHERE store_id = #{storeId}
+    </select>
+</mapper>

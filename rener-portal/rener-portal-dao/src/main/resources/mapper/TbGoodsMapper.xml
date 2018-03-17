@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.TbGoodsMapper" >
+
+    <select id="findGoodsById" parameterType="Long" resultType="TbGoods">
+        SELECT * FROM tb_goods WHERE goods_id=#{goodsId}
+
+    </select>
+    <!--更新产品信息-->
+    <update id="updateByPrimaryKeySelective" parameterType="TbGoods">
+        update tb_goods
+        <set>
+            <if test="goodsName != null">
+                goods_name = #{goodsName},
+        </if>
+            <if test="goodsPic != null">
+                goods_pic = #{goodsPic},
+            </if>
+            <if test="goodsPicDetail != null">
+                goods_pic_detail = #{goodsPicDetail},
+            </if>
+            <if test="goodsSales != null">
+                goods_sales = #{goodsSales},
+            </if>
+            <if test="evaluationNumber != null">
+                evaluation_number = #{evaluationNumber},
+            </if>
+            <if test="praiseRate != null">
+                Praise_rate = #{praiseRate},
+            </if>
+            <if test="goodsHeat != null">
+                goods_heat = #{goodsHeat},
+            </if>
+            <if test="goodsPrice != null">
+                goods_price = #{goodsPrice},
+            </if>
+            <if test="discountId != null">
+                discount_id = #{discountId},
+            </if>
+            <if test="convertGrade != null">
+                convert_grade = #{convertGrade},
+            </if>
+            <if test="souvenirTag != null">
+                souvenir_tag = #{souvenirTag},
+            </if>
+            <if test="goodsTypeId != null">
+                goods_type_id = #{goodsTypeId},
+            </if>
+            <if test="appointmentTag != null">
+                appointment_tag = #{appointmentTag},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="goodsDetail != null">
+                goods_detail = #{goodsDetail},
+            </if>
+        </set>
+        where goods_id = #{goodsId}
+    </update>
+
+    <resultMap id="searchGoodseDetail" type="com.rener.portal.model.vo.TbGoodsInfo">
+        <result column="goods_pic" property="goodsPic" ></result>
+        <result column="goods_name" property="goodsName" ></result>
+        <result column="goods_price" property="goodsPrice" ></result>
+        <result column="store_id" property="storeId"></result>
+        <association property="storeName"
+                     select="com.rener.portal.dao.TbStoresMapper.selectStoreName"
+                     column="store_id"></association>
+        <association property="discountRate"
+                     select="com.rener.portal.dao.TbDiscountMapper.findDiscountRate"
+                     column="discount_id"></association>
+    </resultMap>
+
+    <select id="selectGoodsInfo" parameterType="Long" resultMap="searchGoodseDetail">
+        select goods_pic,goods_name,goods_price,discount_id,store_id
+        from tb_goods
+        where goods_id=#{goodsId}
+    </select>
+
+    <select id="selectGoodsId" resultType="Long">
+        select goods_id from tb_goods
+        where store_id in
+        <foreach collection="list" separator=","
+                 open="(" close=")" item="t">
+            #{t}
+        </foreach>
+    </select>
+    <select id="selectTypeCount" resultType="Long">
+        select DISTINCT store_id FROM tb_goods where goods_id IN
+        <foreach collection="list" item="idList" open="(" close=")" separator=",">
+            #{idList}
+        </foreach>
+    </select>
+    <select id="selectGoodsPrice" parameterType="Long" resultType="BigDecimal">
+        SELECT goods_price FROM tb_goods where goods_id=#{id}
+    </select>
+    <update id="updateGoodsNum">
+        UPDATE tb_goods SET goods_sales=goods_sales+#{num} WHERE goods_id=#{goodsId}
+    </update>
+    <resultMap id="goodsInfo" type="TbGoods">
+        <id column="goodsId" property="goodsId"/>
+        <result column="goodsName" property="goods_name"/>
+        <result column="goodsPic" property="goods_pic"/>
+        <result column="goodsName" property="goods_name"/>
+    </resultMap>
+    <select id="selectGoodsInfoOfOrder" resultMap="goodsInfo">
+        select goods_id,goods_name,goods_pic FROM tb_goods WHERE goods_id=#{goodsId}
+    </select>
+    <select id="selectDiscountById" resultType="Long">
+        SELECT discount_id from tb_goods where goods_id=#{goodsId}
+    </select>
+</mapper>

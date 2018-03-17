@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.TbCommentsMapper">
+
+
+    <resultMap id="TbCommentsMap" type="com.rener.portal.model.vo.TbCommentsVo">
+        <id column="comment_id" property="commentId"></id>
+        <result column="user_id" property="userId"></result>
+        <result column="goods_id" property="goodsId"></result>
+        <result column="store_id" property="storeId"></result>
+        <result column="upload_place" property="uploadPlace"></result>
+        <result column="photo" property="photo"></result>
+        <result column="store_name" property="storeName"></result>
+        <result column="store_icon" property="storeIcon"></result>
+        <result column="comment_info" property="commentInfo"></result>
+        <result column="upload_time" property="uploadTime"></result>
+        <result column="user_photo" property="userPhoto"></result>
+        <result column="user_nickname" property="userNickname"></result>
+    </resultMap>
+    <!--全部评价-->
+    <select id="commentsOne" resultMap="TbCommentsMap">
+    SELECT tb_comment.comment_info,upload_time,praise_level,tb_stores.store_name,tb_stores.store_icon ,
+    tb_goods.goods_name,tb_users.user_nickname, tb_users.user_photo FROM tb_comment,tb_stores,tb_goods,tb_users WHERE tb_comment.user_id=#{user_id}
+    AND  tb_users.user_id=tb_comment.user_id  AND tb_comment.store_id=tb_stores.store_id
+    AND tb_comment.goods_id=tb_goods.goods_id  ORDER BY tb_comment.update_time desc
+    </select>
+    <!--晒图-->
+    <select id="commentsTwo" resultMap="TbCommentsMap">
+    SELECT tb_comment.comment_info,upload_time,praise_level,tb_stores.store_name,tb_stores.store_icon ,
+    tb_goods.goods_name,tb_comment.photo,tb_users.user_nickname, tb_users.user_photo FROM tb_comment,tb_stores,tb_goods,tb_users  WHERE tb_comment.user_id=#{user_id} AND tb_comment.store_id=tb_stores.store_id
+    AND tb_comment.goods_id=tb_goods.goods_id AND  tb_users.user_id=tb_comment.user_id  ORDER BY tb_comment.update_time desc
+    </select>
+    <!--低分-->
+    <select id="commentsThree" resultMap="TbCommentsMap">
+   SELECT tb_comment.comment_info,upload_time,tb_comment.praise_level,tb_stores.store_name,tb_stores.store_icon ,
+        tb_goods.goods_name,tb_users.user_nickname,tb_users.user_photo FROM tb_comment,tb_stores,tb_goods,tb_users  WHERE tb_comment.user_id=#{user_id} AND tb_comment.store_id=tb_stores.store_id
+        AND tb_comment.goods_id=tb_goods.goods_id
+        AND  tb_users.user_id=tb_comment.user_id  AND 3>tb_comment.praise_level ORDER BY tb_comment.praise_level
+    </select>
+    <!--最新-->
+    <select id="commentsFour" resultMap="TbCommentsMap">
+        SELECT tb_comment.comment_info,upload_time,praise_level,tb_stores.store_name,tb_stores.store_icon ,
+    tb_goods.goods_name,tb_users.user_nickname, tb_users.user_photo FROM tb_comment,tb_stores,tb_goods,tb_users WHERE tb_comment.user_id=#{user_id}
+    AND  tb_users.user_id=tb_comment.user_id  AND tb_comment.store_id=tb_stores.store_id
+    AND tb_comment.goods_id=tb_goods.goods_id  ORDER BY tb_comment.update_time desc
+    </select>
+</mapper>

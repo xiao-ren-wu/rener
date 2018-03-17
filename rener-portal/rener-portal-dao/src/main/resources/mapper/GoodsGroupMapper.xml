@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.GoodsGroupVoMapper">
+    <resultMap id="ojbk" type="com.rener.portal.model.vo.GoodsGroupVo">
+        <result column="goods_id" property="goodsId"/>
+        <result column="goods_name" property="goodsName"/>
+        <result column="goods_pic" property="goodsPic"/>
+        <result column="store_address" property="storeAddress"/>
+        <result column="price_discripe" property="priceDiscripe"/>
+    </resultMap>
+
+    <!--<select id="goodsGroup" resultMap="ojbk">-->
+        <!--SELECT tg.goods_id,tg.goods_name,tg.goods_pic,ts.store_address,td.price_discripe-->
+        <!--FROM tb_goods tg,tb_discount td,tb_stores ts-->
+        <!--WHERE tg.store_id=ts.store_id AND tg.discount_id = td.discount_id-->
+
+    <!--</select>-->
+
+    <select id="SelectesGoodsGroup" resultMap="ojbk">
+        SELECT tg.goods_id,tg.goods_name,tg.goods_pic,ts.store_address,td.price_discripe
+        FROM tb_goods tg,tb_discount td,tb_stores ts
+        <where>
+            tg.store_id=ts.store_id AND tg.discount_id = td.discount_id
+            <if test="types !='全部分类'">
+                AND tg.goods_type_id = (SELECT tgt.goods_type_id FROM tb_goods_type tgt WHERE
+                tgt.goods_type = #{types})
+            </if>
+            <if test="address !='全部商区'">
+                AND tg.store_id IN (SELECT ts.store_id FROM tb_stores ts WHERE
+                INSTR(ts.store_address,#{address}))
+            </if>
+            <choose>
+                <when test="auto =='销量'">
+                    ORDER BY tg.goods_sales DESC
+                </when>
+                <when test="auto =='价格'">
+                    ORDER BY tg.goods_price
+                </when>
+                <when test="auto =='热度'">
+                    ORDER BY tg.goods_heat DESC
+                </when>
+            </choose>
+        </where>
+    </select>
+</mapper>

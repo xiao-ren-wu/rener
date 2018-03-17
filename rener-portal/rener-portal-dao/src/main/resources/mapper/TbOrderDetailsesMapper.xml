@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.TbOrderDetailsesMapper">
+
+    <update id="deleteById">
+    UPDATE tb_order_detailses set mark=0 where orderdetails_id=#{id}
+    </update>
+    <insert id="insert">
+        INSERT into tb_order_detailses (order_id, goods_id, goods_number, goods_totalprice)
+        VALUES
+        (#{orderId},#{goodsId},#{goodsNumber},#{goodsTotalprice})
+    </insert>
+    <update id="updateById">
+        UPDATE tb_order_detailses SET
+        <trim prefix="set" suffixOverrides=",">
+            <if test="goodsNumber!=null">goods_number=#{goodsNumber},</if>
+            <if test="goodsTotalprice!=null">goods_totalprice=#{goodsTotalprice},</if>
+            <if test="orderDescribe!=null">order_describe=#{orderDescribe},</if>
+        </trim>
+        where orderdetails_id=#{orderdetailsId,,jdbcType=BIGINT} and mark=1
+    </update>
+</mapper>

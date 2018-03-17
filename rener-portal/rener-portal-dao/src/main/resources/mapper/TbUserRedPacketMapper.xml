@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.TbUserRedPacketMapper">
+
+    <insert id="insert" parameterType="TbRedDetail">
+        <selectKey order="AFTER" keyProperty="redDetailId" resultType="Long">
+            SELECT LAST_INSERT_ID();
+        </selectKey>
+        insert into tb_red_detail (user_id,red_packet_id,get_time,end_time,user_mode,create_time)
+        values (#{userId},#{redPacketId},#{getTime},#{endTime},#{userMode},#{createTime});
+    </insert>
+
+    <update id="updateMode">
+        update tb_red_detail
+        set user_mode=#{mode},update_time=#{newTime}
+        where red_detail_id=#{id}
+    </update>
+
+    <select id="selectEndTime" parameterType="Long" resultType="java.util.Date">
+        select end_time from tb_red_detail
+        where red_detail_id=#{id}
+    </select>
+
+    <resultMap id="userRedView" type="com.rener.portal.model.vo.UserRedView">
+        <result column="get_time" property="getTime"></result>
+        <result column="end_time" property="endTime"></result>
+        <result column="user_mode" property="userMode"></result>
+        <result column="red_facevalue" property="redFacevalue"></result>
+        <result column="red_ageing" property="redAgeing"></result>
+        <result column="red_addprop" property="redAddprop"></result>
+        <result column="store_name" property="storeName"></result>
+    </resultMap>
+
+    <select id="selectRedsByUserId" parameterType="Long" resultMap="userRedView">
+        select get_time,end_time,user_mode,red_facevalue,red_ageing,red_addprop,store_name
+        from tb_red_detail,tb_red_packet,tb_stores
+        where tb_red_detail.red_packet_id=tb_red_packet.red_classes_id
+        and tb_red_packet.store_id=tb_stores.store_id
+        and user_id=#{id}
+    </select>
+
+</mapper>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.TbUsersMapper">
+
+    <!--查询用户信息-->
+    <select id="findUserById" parameterType="Long" resultType="TbUsers">
+    SELECT *  FROM tb_users WHERE user_id=#{userId}
+  </select>
+
+    <!--更改用户信息-->
+    <update id="updateUserMsgById" parameterType="TbUsers" >
+        update tb_users
+        <set>
+            <if test="userPwd != null">
+                user_pwd = #{userPwd,jdbcType=VARCHAR},
+            </if>
+            <if test="userTel != null">
+                user_tel = #{userTel,jdbcType=VARCHAR},
+            </if>
+            <if test="userBirth != null">
+                user_birth = #{userBirth,jdbcType=DATE},
+            </if>
+            <if test="userEmail != null">
+                user_email = #{userEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="userNickname != null">
+                user_nickname = #{userNickname,jdbcType=VARCHAR},
+            </if>
+            <if test="userBalance != null">
+                user_balance = #{userBalance,jdbcType=DECIMAL},
+            </if>
+            <if test="userIntegral != null">
+                user_integral = #{userIntegral,jdbcType=INTEGER},
+            </if>
+            <if test="userPhoto != null">
+                user_photo = #{userPhoto,jdbcType=VARCHAR},
+            </if>
+            <if test="userNickname != null">
+                user_nickname = #{userNickname,jdbcType=VARCHAR},
+            </if>
+            <if test="userLevelId != null">
+                user_level_id = #{userLevelId,jdbcType=TINYINT},
+            </if>
+            <if test="userOnlinestate != null">
+                user_onlineState = #{userOnlinestate,jdbcType=TINYINT},
+            </if>
+        </set>
+        where user_id = #{userId,jdbcType=BIGINT}
+    </update>
+
+    <!--通过用户id查询密码-->
+    <select id="findpasswordById" resultType="String" parameterType="Long">
+        SELECT user_pwd FROM tb_users WHERE user_id=#{userId}
+    </select>
+    <resultMap id="TbUsersresultMap" type="TbUsers">
+        <id column="user_id" property="userId"></id>
+        <result column="user_pwd" property="userPwd"></result>
+        <result column="user_tel" property="userTel"></result>
+        <result column="user_nickname" property="userNickname"></result>
+        <result column="user_email" property="userEmail"></result>
+        <result column="user_birth" property="userBirth"></result>
+        <result column="user_sex" property="userSex"></result>
+        <result column="user_id" property="userId"></result>
+        <!--(@Param("lidan") String userNickname,@Param("password") String userPwd,
+                           @Param("11000") String userTel,@Param("1005887808@qq.com")String userEmail,
+                           @Param("1997年11月09日") Date userBirth,@Param("1") int userSex);
+        -->
+    </resultMap>
+    <!--登陆-->
+    <select id="login" resultMap="TbUsersresultMap">
+        SELECT * from tb_users
+        WHERE  user_pwd=#{userPwd} AND user_tel=#{userTel} AND user_onlineState = 0
+    </select>
+    <!--查询用户注册的号码是否重复-->
+    <select id="inspect" resultMap="TbUsersresultMap">
+        SELECT * from tb_users WHERE  user_tel=#{userTel}
+    </select>
+    <!--注册-->
+    <insert id="enroll">
+        INSERT INTO tb_users (user_nickname,user_pwd,user_tel,user_email,user_sex)VALUES
+        (#{tbUsers.userNickname},#{tbUsers.userPwd},
+        #{tbUsers.userTel},#{tbUsers.userEmail},#{tbUsers.userSex})
+        <!-- <selectKey resultType="Long" keyProperty="user_id" order="AFTER">
+                 SELECT @@IDENTITY
+         </selectKey>-->
+
+    </insert>
+
+
+
+    <!--退出-->
+    <update id="exit">
+        UPDATE  tb_users SET user_onlineState=0 WHERE  user_id=#{userId}  and user_onlineState=1
+    </update>
+
+    <!--修改用户状态-->
+    <update id="update">
+        UPDATE tb_users SET user_onlineState=0 WHERE user_id=#{userId} ;
+    </update>
+    <select id="selectNameById" resultType="String">
+        select user_nickname FROM tb_users WHERE user_id=#{userId}
+    </select>
+</mapper>
+
+
+
+
+
+
+
+

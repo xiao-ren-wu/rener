@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.TbAddressMapper">
+    <resultMap id="userAddressMsg" type="TbAddress">
+        <id column="address_id" jdbcType="BIGINT" property="addressId" />
+        <result column="user_id" jdbcType="BIGINT" property="userId" />
+        <result column="consignee" jdbcType="VARCHAR" property="consignee" />
+        <result column="consignee_tel" jdbcType="CHAR" property="consigneeTel" />
+    </resultMap>
+
+    <!--插入用户收货地址-->
+    <insert id="insertUserAddress" parameterType="TbAddress">
+        insert into tb_address (
+        user_id,
+        consignee,
+        consignee_tel,
+        consignee_address)
+        values (
+        #{userId},
+        #{consignee},
+        #{consigneeTel},
+        #{consigneeAddress})
+    </insert>
+    <!--通过用户id统计用户收货地址数量-->
+    <select id="countUserAddress" parameterType="Long" resultType="Integer">
+        SELECT COUNT(address_id) FROM tb_address WHERE user_id=#{userId}
+    </select>
+    <!--分页查询收货地址-->
+    <select id="selectUserAddress" resultType="com.rener.portal.model.vo.UserAddressVo">
+        SELECT  user_id,
+                address_id,
+                consignee,
+                consignee_tel,
+                consignee_address
+         FROM tb_address
+         WHERE user_id=#{userId}  ORDER BY create_time DESC LIMIT #{currentNum},#{pageSize}
+    </select>
+    <select id="selectUserAddress1" resultMap="userAddressMsg">
+        SELECT *
+        FROM tb_address
+        WHERE user_id=#{userId} LIMIT #{currentNum},#{pageSize}
+    </select>
+
+    <resultMap id="addressInfo" type="TbAddress">
+        <result property="userId" column="user_id"/>
+        <result property="consignee" column="consignee"/>
+        <result property="consigneeTel" column="consignee_tel"/>
+        <result property="consigneeAddress" column="consignee_address"/>
+    </resultMap>
+    <!--根据收货地址id删除收货地址-->
+    <delete id="delUserAddress" parameterType="Long">
+        DELETE FROM tb_address WHERE address_id=#{addressId}
+    </delete>
+    <select id="selectUserAddressById" resultMap="userAddressMsg">
+        SELECT *
+        FROM tb_address
+        WHERE address_id=#{addressId}
+    </select>
+</mapper>

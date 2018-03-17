@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rener.portal.dao.TbFriendshipMapper">
+
+    <resultMap id="TbFriendshipVoMap" type="com.rener.portal.model.vo.TbFriendshipVo">
+        <result property="userId" column="user_id"/>
+        <result property="userNickname" column="user_nickname"/>
+        <result property="userPhoto" column="user_photo"/>
+        <result property="userOnlineState" column="user_onlineState"/>
+    </resultMap>
+
+    <!--查询某一个人的好友列表-->
+    <select id="select" parameterType="Long" resultMap="TbFriendshipVoMap">
+        SELECT u.user_id,u.user_nickname,u.user_photo,u.user_onlineState  FROM tb_friendship f,tb_users u WHERE f.firend_id=u.user_id AND f.user_id=#{userId} ORDER BY user_nickname
+    </select>
+
+    <!--添加关注好友-->
+    <insert id="insert" parameterType="com.rener.portal.model.mo.TbFriendship">
+        INSERT tb_friendship(user_id,firend_id,create_time,update_time)
+        VALUES(#{userId},#{firendId},#{createTime},#{updateTime})
+        <selectKey resultType="Long" keyProperty="friendshipId" order="AFTER">
+            SELECT @@IDENTITY
+        </selectKey>
+    </insert>
+
+    <!--删除好友-->
+    <delete id="delete" parameterType="com.rener.portal.model.mo.TbFriendship">
+        DELETE FROM tb_friendship WHERE user_id=#{userId} AND firend_id=#{firendId}
+    </delete>
+
+</mapper>

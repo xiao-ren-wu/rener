@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--<form action="http://localhost:8080/user/login" method="post">-->
+    <!--手机号:<input type="text" name="tell"  id="tell"></input>-->
+    <!--<br>-->
+    <!--用户密码:<input type="text" name="pwd"  id="pwd"></input>-->
+    <!--<br>-->
+    <!--<input type="submit"/>-->
+<!--</form>-->
+
+<script type="text/javascript">
+    var xhr = new XMLHttpRequest()
+    xhr.open("get","http://localhost:8088/comment")
+    xhr.send()
+    xhr.onreadystatechange = function () {
+        var result = xhr.responseText
+        console.log(result)
+    }
+</script>
+</body>
+</html>
